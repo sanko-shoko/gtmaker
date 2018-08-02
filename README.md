@@ -14,11 +14,12 @@ left click on image and drag.
 ![fig1](https://github.com/sanko-shoko/gtmaker/blob/master/screenshot/fig1.png)
 
 ### edit contour
+check [edit menu -> contour] (after editing rectangle)
+
 left click on image for the points.
 
 click on the start point to create a loop.
 
-check [edit menu -> contour] (after editing rectangle)
 
 ![fig2](https://github.com/sanko-shoko/gtmaker/blob/master/screenshot/fig2.png)
 
