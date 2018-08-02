@@ -23,6 +23,11 @@ click on the start point to create a loop.
 
 ![fig2](https://github.com/sanko-shoko/gtmaker/blob/master/screenshot/fig2.png)
 
+### save & load
+save : click [save]
+load : click left string of [save], and select directory
+
+
 ## compile
 required
 - OpenCV
