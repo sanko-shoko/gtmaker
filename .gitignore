@@ -1,3 +1,7 @@
 # project files
-/build/*
+/build*/*
 
+
+# others
+a.exe
+/x64/*

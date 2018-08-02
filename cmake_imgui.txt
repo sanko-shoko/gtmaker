@@ -1,0 +1,8 @@
+set(IMGUI_DIR "${SIMPLESP_DIR}/external/imgui")
+
+include_directories(${IMGUI_DIR})
+
+file(GLOB IMGUI ${IMGUI_DIR}/*.h ${IMGUI_DIR}/*.cpp)
+source_group("_imgui" FILES ${IMGUI})
+
+set(SUB ${SUB} ${IMGUI})
