@@ -25,6 +25,7 @@ click on the start point to create a loop.
 
 ### save & load
 save : click [save]
+
 load : click left string of [save], and select directory
 
 
