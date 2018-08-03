@@ -1,4 +1,5 @@
 ﻿# gtmaker
+image annotation tool
 
 ## how to use
 [windows binary](https://github.com/sanko-shoko/gtmaker/releases)
