@@ -217,7 +217,7 @@ public:
     void save() {
 
         {
-            mkdir(wkDir.c_str());
+            makeDir(wkDir.c_str());
 
             const string path = wkDir + "\\labels.csv";
             
@@ -233,7 +233,7 @@ public:
 
 
         {
-            mkdir((wkDir + "\\rect").c_str());
+            makeDir((wkDir + "\\rect").c_str());
             for (int i = 0; i < gtsList.size(); i++) {
 
                 const string path = wkDir + "\\rect\\" + imNames[i] + ".csv";
@@ -258,7 +258,7 @@ public:
         }
 
         {
-            mkdir((wkDir + "\\cont").c_str());
+            makeDir((wkDir + "\\cont").c_str());
             for (int i = 0; i < gtsList.size(); i++) {
 
                 const string path = wkDir + "\\cont\\" + imNames[i] + ".csv";
