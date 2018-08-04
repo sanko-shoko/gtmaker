@@ -88,7 +88,7 @@ public:
         //const char *path = SP_DATA_DIR "/image";
         if (path == NULL) return false;
 
-        imDir = path;
+        imDir = trimDir(path);
         imNames = getFileList(path, "bmp, BMP, png, PNG, jpeg, JPEG, jpg, JPG");
         
         gtsList.resize(imNames.size());
@@ -114,14 +114,14 @@ public:
         const char *path = tinyfd_selectFolderDialog("open work dir", base.c_str());
         if (path == NULL) return false;
         
-        base = path;
+        base = trimDir(path);
 
-        wkDir = path;
+        wkDir = base;
 
         gtNames.clear();
 
         {
-            const string path = wkDir + "\\labels.csv";
+            const string path = wkDir + "/labels.csv";
                 
             File file;
             if (file.open(path.c_str(), "r") == false) return false;
@@ -140,7 +140,7 @@ public:
         {
             for (int i = 0; i < imNames.size(); i++) {
 
-                const string path = (wkDir + "\\rect\\" + imNames[i] + ".csv");
+                const string path = (wkDir + "/rect/" + imNames[i] + ".csv");
 
                 MemP<GT> &gts = gtsList[i];
                 gts.clear();
@@ -166,7 +166,7 @@ public:
         {
             for (int i = 0; i < imNames.size(); i++) {
 
-                const string path = (wkDir + "\\cont\\" + imNames[i] + ".csv");
+                const string path = (wkDir + "/cont/" + imNames[i] + ".csv");
 
                 MemP<GT> &gts = gtsList[i];
 
@@ -219,7 +219,7 @@ public:
         {
             makeDir(wkDir.c_str());
 
-            const string path = wkDir + "\\labels.csv";
+            const string path = wkDir + "/labels.csv";
             
             File file;
             SP_ASSERT(file.open(path.c_str(), "w"));
@@ -233,10 +233,10 @@ public:
 
 
         {
-            makeDir((wkDir + "\\rect").c_str());
+            makeDir((wkDir + "/rect").c_str());
             for (int i = 0; i < gtsList.size(); i++) {
 
-                const string path = wkDir + "\\rect\\" + imNames[i] + ".csv";
+                const string path = wkDir + "/rect/" + imNames[i] + ".csv";
 
                 MemP<GT> &gts = gtsList[i];
 
@@ -258,10 +258,10 @@ public:
         }
 
         {
-            makeDir((wkDir + "\\cont").c_str());
+            makeDir((wkDir + "/cont").c_str());
             for (int i = 0; i < gtsList.size(); i++) {
 
-                const string path = wkDir + "\\cont\\" + imNames[i] + ".csv";
+                const string path = wkDir + "/cont/" + imNames[i] + ".csv";
 
                 MemP<GT> &gts = gtsList[i];
 
