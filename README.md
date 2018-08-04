@@ -32,7 +32,7 @@ load : click left string of [save], and select directory
 
 ## compile
 required
-- OpenCV
-- GLFW
+- [OpenCV](https://opencv.org/)
+- [GLFW](http://www.glfw.org/)
 - [simplesp](https://github.com/sanko-shoko/simplesp)
 
