@@ -2,7 +2,7 @@
 image annotation tool
 
 ## how to use
-[windows binary](https://github.com/sanko-shoko/gtmaker/releases)
+[binaly file (windows, mac)](https://github.com/sanko-shoko/gtmaker/releases)
 
 ### open image directory
 select [file -> open image dir]
