@@ -3,6 +3,7 @@ image annotation tool
 
 ## how to use
 [binaly file (windows, mac)](https://github.com/sanko-shoko/gtmaker/releases)
+
 [demo youtube](https://www.youtube.com/watch?time_continue=106&v=a3ub4SHJEEs)
 
 ### open image directory
