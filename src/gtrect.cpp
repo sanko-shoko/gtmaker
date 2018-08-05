@@ -1,4 +1,4 @@
-﻿#include "gtmaker.h"
+#include "gtmaker.h"
 
 using namespace sp;
 
@@ -26,6 +26,7 @@ void GTMakerGUI::menuRect() {
         combolist.push(m_database.gtNames[i].c_str());
     }
 
+    
     for (int i = 0; i < gts.size(); i++) {
         GT &gt = gts[i];
 
@@ -33,7 +34,7 @@ void GTMakerGUI::menuRect() {
 
         if (ImGui::Begin(strFormat("GT %p", &gt).c_str(), NULL, ImGuiWindowFlags_Block)) {
             {
-                const Vec2 pos = m_vmat * getVec(gt.rect.dbase[0], gt.rect.dbase[1]) + getVec(0.0, -40.0);
+                const Vec2 pos = m_pmat * m_vmat * getVec(gt.rect.dbase[0], gt.rect.dbase[1]) + getVec(0.0, -40.0);
                 ImGui::SetWindowPos(ImVec2(static_cast<float>(pos.x), static_cast<float>(pos.y)), ImGuiCond_Always);
             }
 
@@ -84,8 +85,6 @@ void GTMakerGUI::dispRect() {
 
     MemP<GT> &gts = m_database.gtsList[m_selectid];
 
-    glLoadView2D(m_img.dsize[0], m_img.dsize[1], m_viewPos, m_viewScale);
-
     for (int i = 0; i < gts.size(); i++) {
         GT &gt = gts[i];
 
@@ -109,7 +108,7 @@ void GTMakerGUI::dispRect() {
 
 void GTMakerGUI::mouseButtonRect(int button, int action, int mods) {
 
-    const Vec2 pix = invMat(m_vmat) * m_mouse.pos;
+    const Vec2 pix = invMat(m_pmat * m_vmat) * m_mouse.pos;
 
     switch (m_mouse.bDownL) {
     case 1:
@@ -162,7 +161,7 @@ void GTMakerGUI::mouseButtonRect(int button, int action, int mods) {
 void GTMakerGUI::mousePosRect(double x, double y) {
     if (m_focus == NULL || m_state == S_Base) return;
 
-    const Vec2 pix = invMat(m_vmat) * m_mouse.pos;
+    const Vec2 pix = invMat(m_pmat * m_vmat) * m_mouse.pos;
 
     m_focus->rect = orRect(getRect2(pix), getRect2(g_basePos));
 }

@@ -1,4 +1,4 @@
-﻿#ifndef __GTMAKER__
+#ifndef __GTMAKER__
 #define __GTMAKER__
 
 #include "gtutil.h"
@@ -36,6 +36,8 @@ private:
     State m_state;
 
     Mat m_vmat;
+    
+    Mat m_pmat;
 
 public:
 
@@ -60,7 +62,7 @@ private:
     void select(const int id) {
         m_selectid = maxVal(0, minVal(m_database.imNames.size() - 1, id));
 
-        const string path = m_database.imDir + "\\" + m_database.imNames[m_selectid];
+        const string path = m_database.imDir + "/" + m_database.imNames[m_selectid];
         SP_ASSERT(cvLoadImg(m_img, path.c_str()));
 
         reset();
@@ -131,8 +133,11 @@ private:
             ImGui::EndMainMenuBar();
         }
 
-        m_vmat = glGetViewMat(m_img.dsize[0], m_img.dsize[1], m_viewPos, m_viewScale);
-       
+        m_vmat = glGetViewMat(m_img.dsize[0], m_img.dsize[1], m_viewPos * m_pixScale, m_viewScale * m_pixScale);
+        m_pmat = eyeMat(4, 4);
+        m_pmat(0, 0) = 1.0 / m_pixScale;
+        m_pmat(1, 1) = 1.0 / m_pixScale;
+
         {
             glLoadView2D(m_img.dsize, m_vmat);
             glRenderImg(m_img);

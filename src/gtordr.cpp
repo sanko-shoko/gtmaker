@@ -1,4 +1,4 @@
-﻿#include "gtmaker.h"
+#include "gtmaker.h"
 
 using namespace sp;
 
@@ -27,7 +27,7 @@ void GTMakerGUI::menuOrdr() {
 
         if (ImGui::Begin(strFormat("GT %p", &gt).c_str(), NULL, ImGuiWindowFlags_Block)) {
             {
-                const Vec2 pos = m_vmat * getVec(gt.rect.dbase[0], gt.rect.dbase[1]) + getVec(0.0, -40.0);
+                const Vec2 pos = m_pmat * m_vmat * getVec(gt.rect.dbase[0], gt.rect.dbase[1]) + getVec(0.0, -40.0);
                 ImGui::SetWindowPos(ImVec2(static_cast<float>(pos.x), static_cast<float>(pos.y)), ImGuiCond_Always);
             }
 
