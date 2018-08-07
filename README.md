@@ -29,6 +29,7 @@ click on the start point to create a loop.
 
 ### adjust image
 shift   : space key + left click + drag
+
 rescale : space key + mouse scroll
 
 ### save & load
