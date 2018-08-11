@@ -36,7 +36,7 @@ public:
     State m_state;
 
     // image to window matrix
-    Mat m_vmat;
+    Mat m_wmat;
 
 public:
 
@@ -114,7 +114,7 @@ public:
   
     virtual void display() {
         
-        m_vmat = glGetViewMat(m_img.dsize[0], m_img.dsize[1], m_viewPos, m_viewScale);
+        m_wmat = glGetWindowMat(m_img.dsize[0], m_img.dsize[1], m_viewPos, m_viewScale);
 
         if (ImGui::BeginMainMenuBar()) {
 

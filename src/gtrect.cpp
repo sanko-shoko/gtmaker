@@ -35,7 +35,7 @@ void GTMakerGUI::RectEditor::display() {
 
         if (ImGui::Begin(strFormat("GT %p", &gt).c_str(), NULL, ImGuiWindowFlags_Block)) {
             {
-                const Vec2 pos = m_ptr->m_vmat * getVec(gt.rect.dbase[0], gt.rect.dbase[1]) + getVec(0.0, -40.0);
+                const Vec2 pos = m_ptr->m_wmat * getVec(gt.rect.dbase[0], gt.rect.dbase[1]) + getVec(0.0, -40.0);
                 ImGui::SetWindowPos(ImVec2(static_cast<float>(pos.x), static_cast<float>(pos.y)), ImGuiCond_Always);
             }
 
@@ -102,7 +102,7 @@ void GTMakerGUI::RectEditor::display() {
 }
 
 void GTMakerGUI::RectEditor::mouseButton() {
-    const Vec2 pix = invMat(m_ptr->m_vmat) * m_ptr->m_mouse.pos;
+    const Vec2 pix = invMat(m_ptr->m_wmat) * m_ptr->m_mouse.pos;
 
     switch (m_ptr->m_mouse.bDownL) {
     case 1:
@@ -154,7 +154,7 @@ void GTMakerGUI::RectEditor::mouseButton() {
 void GTMakerGUI::RectEditor::mousePos() {
     if (m_ptr->m_focus == NULL || m_ptr->m_state == S_Base) return;
 
-    const Vec2 pix = invMat(m_ptr->m_vmat) * m_ptr->m_mouse.pos;
+    const Vec2 pix = invMat(m_ptr->m_wmat) * m_ptr->m_mouse.pos;
     m_ptr->m_focus->rect = orRect(getRect2(pix), getRect2(g_basePos));
 
 }

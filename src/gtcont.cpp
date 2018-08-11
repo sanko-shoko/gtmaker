@@ -41,7 +41,7 @@ void GTMakerGUI::ContEditor::display() {
 
     if (ImGui::Begin("editor", NULL, ImGuiWindowFlags_Block)) {
         {
-            const Vec2 pos = m_ptr->m_vmat * getVec(gt.rect.dbase[0], gt.rect.dbase[1]) + getVec(0.0, -40.0);
+            const Vec2 pos = m_ptr->m_wmat * getVec(gt.rect.dbase[0], gt.rect.dbase[1]) + getVec(0.0, -40.0);
             ImGui::SetWindowPos(ImVec2(static_cast<float>(pos.x), static_cast<float>(pos.y)), ImGuiCond_Always);
         }
 
@@ -74,7 +74,7 @@ void GTMakerGUI::ContEditor::display() {
     }
 
 
-    const Vec2 pix = invMat(m_ptr->m_vmat) * m_ptr->m_mouse.pos;
+    const Vec2 pix = invMat(m_ptr->m_wmat) * m_ptr->m_mouse.pos;
 
     const int findPos = m_ptr->findNearPos(m_ptr->m_focus->contour, pix);
     const int findLine = m_ptr->findNearLine(*g_crnt, pix);
@@ -122,7 +122,7 @@ void GTMakerGUI::ContEditor::display() {
 void GTMakerGUI::ContEditor::mouseButton() {
     if (m_ptr->m_focus == NULL) return;
 
-    const Vec2 pix = invMat(m_ptr->m_vmat) * m_ptr->m_mouse.pos;
+    const Vec2 pix = invMat(m_ptr->m_wmat) * m_ptr->m_mouse.pos;
 
     const int findPos = m_ptr->findNearPos(*g_crnt, pix);
     const int findLine = m_ptr->findNearLine(*g_crnt, pix);
@@ -230,7 +230,7 @@ void GTMakerGUI::ContEditor::mouseButton() {
 void GTMakerGUI::ContEditor::mousePos() {
     if (m_ptr->m_focus == NULL || m_ptr->m_state == S_Base) return;
 
-    const Vec2 pix = invMat(m_ptr->m_vmat) * m_ptr->m_mouse.pos;
+    const Vec2 pix = invMat(m_ptr->m_wmat) * m_ptr->m_mouse.pos;
    
     const int findPos = m_ptr->findNearPos(m_ptr->m_focus->contour, pix);
     
