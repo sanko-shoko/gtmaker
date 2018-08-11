@@ -7,7 +7,7 @@ using namespace sp;
 
 class GTMakerGUI : public BaseWindow {
 
-private:
+public:
     DataBase m_database;
 
     // selected image
@@ -35,26 +35,26 @@ private:
     };
     State m_state;
 
+    // image to window matrix
     Mat m_vmat;
-    
-    Mat m_pmat;
 
 public:
 
     GTMakerGUI() {
         ImGui::GetIO().IniFilename = NULL;
+        m_mode = M_Rect;
+        m_editor = NULL;
 
         reset();
 
         m_database.gtNames.push("dog");
         m_database.gtNames.push("cat");
-
     }
 
     void reset() {
         m_focus = NULL;
         m_state = S_Base;
-        m_mode = M_Rect;
+        setMode(M_Rect);
     }
 
 private:
@@ -71,10 +71,20 @@ private:
     }
 
     void setMode(const Mode mode) {
-        if (checkMode(mode) == true && mode != m_mode) {
+        static RectEditor rectEditor(this);
+        static OrdrEditor ordrEditor(this);
+        static ContEditor contEditor(this);
+
+        if (m_editor == NULL || (checkMode(mode) == true && mode != m_mode)) {
+            switch (mode) {
+            case M_Rect: m_editor = &rectEditor; break;
+            case M_Cont: m_editor = &contEditor; break;
+            case M_Ordr: m_editor = &ordrEditor; break;
+            }
+
             m_mode = mode;
             m_state = S_Base;
-            init();
+            m_editor->init();
         }
     }
 
@@ -96,22 +106,7 @@ private:
         return true;
     }
 
-    void adjustImg() {
-        if (m_img.size() == 0) return;
-
-        m_viewPos = getVec(100.0, 10.0);
-        m_viewScale = 0.92 * minVal(static_cast<double>(m_wcam.dsize[0] - 180) / m_img.dsize[0], static_cast<double>(m_wcam.dsize[1]) / m_img.dsize[1]);
-    }
-
-
-private:
-
-    virtual void init() {
-
-        initRect();
-        initCont();
-        initOrdr();
-    }
+public:
 
     //--------------------------------------------------------------------------------
     // ui
@@ -119,6 +114,8 @@ private:
   
     virtual void display() {
         
+        m_vmat = glGetViewMat(m_img.dsize[0], m_img.dsize[1], m_viewPos, m_viewScale);
+
         if (ImGui::BeginMainMenuBar()) {
 
             if (ImGui::BeginMenu("file")) {
@@ -133,13 +130,8 @@ private:
             ImGui::EndMainMenuBar();
         }
 
-        m_vmat = glGetViewMat(m_img.dsize[0], m_img.dsize[1], m_viewPos * m_pixScale, m_viewScale * m_pixScale);
-        m_pmat = eyeMat(4, 4);
-        m_pmat(0, 0) = 1.0 / m_pixScale;
-        m_pmat(1, 1) = 1.0 / m_pixScale;
-
         {
-            glLoadView2D(m_img.dsize, m_vmat);
+            glLoadView2D(m_img.dsize, m_viewPos, m_viewScale);
             glRenderImg(m_img);
         }
 
@@ -147,11 +139,7 @@ private:
             
             dispData();
 
-            switch (m_mode) {
-            case M_Rect: menuRect(); dispRect(); break;
-            case M_Cont: menuCont(); dispCont(); break;
-            case M_Ordr: menuOrdr(); dispOrdr(); break;
-            }
+            m_editor->display();
 
             //const ImVec4 col(0.8f, 0.8f, 0.8f, 0.8f);
             //ImGui::PushStyleColor(ImGuiCol_WindowBg, col);
@@ -162,8 +150,16 @@ private:
     void dispData();
 
     //--------------------------------------------------------------------------------
-    // call back
+    // others
     //--------------------------------------------------------------------------------
+
+    void adjustImg() {
+        if (m_img.size() == 0) return;
+
+        m_viewPos = getVec(100.0, 10.0);
+        m_viewScale = 0.92 * minVal(static_cast<double>(m_wcam.dsize[0] - 180) / m_img.dsize[0], static_cast<double>(m_wcam.dsize[1]) / m_img.dsize[1]);
+    }
+
 
     virtual void windowSize(int width, int height) {
         if (m_database.isValid() == false) return;
@@ -194,57 +190,62 @@ private:
 
     virtual void mouseButton(int button, int action, int mods) {
         if (m_database.isValid() == false) return;
-
-        switch (m_mode) {
-        case M_Rect: mouseButtonRect(button, action, mods); break;
-        case M_Cont: mouseButtonCont(button, action, mods); break;
-        case M_Ordr: mouseButtonOrdr(button, action, mods); break;
-        }
+        m_editor->mouseButton();
     }
 
     virtual void mousePos(double x, double y) {
         if (m_database.isValid() == false) return;
-
-        switch (m_mode) {
-        case M_Rect: mousePosRect(x, y); break;
-        case M_Cont: mousePosCont(x, y); break;
-        case M_Ordr: mousePosOrdr(x, y); break;
-        }
+        m_editor->mousePos();
     }
 
     virtual void mouseScroll(double x, double y) {
     }
     
 
-    // rectangle
-    void initRect();
-    void menuRect();
-    void dispRect();
-    void mouseButtonRect(int button, int action, int mods);
-    void mousePosRect(double x, double y);
-
-    // order
-    void initOrdr();
-    void menuOrdr();
-    void dispOrdr();
-    void mouseButtonOrdr(int button, int action, int mods);
-    void mousePosOrdr(double x, double y);
-
-    // contour
-    void initCont();
-    void menuCont();
-    void dispCont();
-    void mouseButtonCont(int button, int action, int mods);
-    void mousePosCont(double x, double y);
-
-
-    //--------------------------------------------------------------------------------
-    // others
-    //--------------------------------------------------------------------------------
-
     int findNearPos(const Mem1<Vec2> &pnst, const Vec2 &pix);
     int findNearLine(const Mem1<Vec2> &pnst, const Vec2 &pix);
 
+
+    //--------------------------------------------------------------------------------
+    // editor
+    //--------------------------------------------------------------------------------
+
+    class Editor {
+    public:
+        GTMakerGUI *m_ptr;
+    public:
+        Editor(GTMakerGUI *ptr) { m_ptr = ptr; }
+        virtual void init() = 0;
+        virtual void display() = 0;
+        virtual void mouseButton() = 0;
+        virtual void mousePos() = 0;
+    };
+    Editor *m_editor;
+
+    class RectEditor : public Editor {
+    public:
+        RectEditor(GTMakerGUI *ptr) : Editor(ptr) {};
+        virtual void init();
+        virtual void display();
+        virtual void mouseButton();
+        virtual void mousePos();
+    };
+    class OrdrEditor : public Editor {
+    public:
+        OrdrEditor(GTMakerGUI *ptr) : Editor(ptr) {};
+        virtual void init();
+        virtual void display();
+        virtual void mouseButton();
+        virtual void mousePos();
+    };
+    class ContEditor : public Editor {
+    public:
+        ContEditor(GTMakerGUI *ptr) : Editor(ptr) {};
+        virtual void init();
+        virtual void display();
+        virtual void mouseButton();
+        virtual void mousePos();
+    };
  };
 
 #endif

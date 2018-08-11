@@ -28,6 +28,9 @@ public:
     // contour
     Mem1<Vec2> contour;
 
+    // pose
+    Pose pose;
+
 public:
 
     GT() {
@@ -41,6 +44,7 @@ public:
         label = gt.label;
         rect = gt.rect;
         contour = gt.contour;
+        pose = gt.pose;
         return *this;
     }
 
@@ -48,6 +52,7 @@ public:
         this->label = -1;
         this->rect = rect;
         this->contour.clear();
+        this->pose = zeroPose();
     }
 };
 
@@ -126,7 +131,7 @@ public:
             File file;
             if (file.open(path.c_str(), "r") == false) return false;
 
-            file.scanf("index,name,\n");
+            file.scanf("index,name\n");
 
             char str[SP_STRMAX];
             while (file.gets(str) == true) {
@@ -148,17 +153,17 @@ public:
                 File file;
                 if (file.open(path.c_str(), "r") == false) continue;
 
-                file.scanf("index,label,x,y,width,height,\n");
+                file.scanf("index,label,x,y,width,height\n");
 
                 char str[SP_STRMAX];
                 while (file.gets(str) == true) {
                     const Mem1<string> split = strSplit(str, ",");
-                    if (split.size() != 7) break;
+                    if (split.size() < 6) break;
 
                     int buf;
                     GT &gt = *gts.malloc();
                     gt.rect.dim = 2;
-                    sscanf(str, "%d,%d,%d,%d,%d,%d,\n", &buf, &gt.label, &gt.rect.dbase[0], &gt.rect.dbase[1], &gt.rect.dsize[0], &gt.rect.dsize[1]);
+                    sscanf(str, "%d,%d,%d,%d,%d,%d\n", &buf, &gt.label, &gt.rect.dbase[0], &gt.rect.dbase[1], &gt.rect.dsize[0], &gt.rect.dsize[1]);
                 }
             }
         }
@@ -173,18 +178,18 @@ public:
                 File file;
                 if (file.open(path.c_str(), "r") == false) continue;
 
-                file.scanf("index,label,x,y,\n");
+                file.scanf("index,label,x,y\n");
 
                 char str[SP_STRMAX];
 
                 while (file.gets(str) == true) {
                     const Mem1<string> split = strSplit(str, ",");
-                    if (split.size() != 5) break;
+                    if (split.size() < 4) break;
 
                     int index, label;
                     Vec2 pos;
 
-                    sscanf(str, "%d,%d,%lf,%lf,\n", &index, &label, &pos.x, &pos.y);
+                    sscanf(str, "%d,%d,%lf,%lf\n", &index, &label, &pos.x, &pos.y);
                     
                     if (index < gts.size()) {
                         GT &gt = gts[index];
@@ -224,10 +229,10 @@ public:
             File file;
             SP_ASSERT(file.open(path.c_str(), "w"));
 
-            file.printf("index,name,\n");
+            file.printf("index,name\n");
 
             for (int i = 0; i < gtNames.size(); i++) {
-                file.printf("%d,%s,\n", i, gtNames[i].c_str());
+                file.printf("%d,%s\n", i, gtNames[i].c_str());
             }
         }
 
@@ -248,11 +253,11 @@ public:
                 File file;
                 SP_ASSERT(file.open(path.c_str(), "w"));
 
-                file.printf("index,label,x,y,width,height,\n");
+                file.printf("index,label,x,y,width,height\n");
 
                 for (int j = 0; j < gts.size(); j++) {
                     const GT &gt = gts[j];
-                    file.printf("%d,%d,%d,%d,%d,%d,\n", j, gt.label, gt.rect.dbase[0], gt.rect.dbase[1], gt.rect.dsize[0], gt.rect.dsize[1]);
+                    file.printf("%d,%d,%d,%d,%d,%d\n", j, gt.label, gt.rect.dbase[0], gt.rect.dbase[1], gt.rect.dsize[0], gt.rect.dsize[1]);
                 }
             }
         }
@@ -273,12 +278,12 @@ public:
                 File file;
                 SP_ASSERT(file.open(path.c_str(), "w"));
 
-                file.printf("index,label,x,y,\n");
+                file.printf("index,label,x,y\n");
 
                 for (int j = 0; j < gts.size(); j++) {
                     const GT &gt = gts[j];
                     for (int k = 0; k < gt.contour.size(); k++) {
-                        file.printf("%d,%d,%lf,%lf,\n", j, gt.label, gt.contour[k].x, gt.contour[k].y);
+                        file.printf("%d,%d,%lf,%lf\n", j, gt.label, gt.contour[k].x, gt.contour[k].y);
                     }
                 }
             }

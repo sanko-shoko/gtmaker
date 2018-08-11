@@ -29,19 +29,19 @@ void autoContour(Mem1<Vec2> &contour, const Mem2<Col3> &img, const Rect &rect) {
 // member
 //--------------------------------------------------------------------------------
 
-void GTMakerGUI::initCont(){
-    g_crnt = &m_focus->contour;
+void GTMakerGUI::ContEditor::init(){
+    g_crnt = &m_ptr->m_focus->contour;
     g_select = NULL;
 }
 
-void GTMakerGUI::menuCont() {
-    if (m_focus == NULL) return;
+void GTMakerGUI::ContEditor::display() {
+    if (m_ptr->m_focus == NULL) return;
 
-    const GT &gt = *m_focus;
+    const GT &gt = *m_ptr->m_focus;
 
     if (ImGui::Begin("editor", NULL, ImGuiWindowFlags_Block)) {
         {
-            const Vec2 pos = m_pmat * m_vmat * getVec(gt.rect.dbase[0], gt.rect.dbase[1]) + getVec(0.0, -40.0);
+            const Vec2 pos = m_ptr->m_vmat * getVec(gt.rect.dbase[0], gt.rect.dbase[1]) + getVec(0.0, -40.0);
             ImGui::SetWindowPos(ImVec2(static_cast<float>(pos.x), static_cast<float>(pos.y)), ImGuiCond_Always);
         }
 
@@ -68,37 +68,28 @@ void GTMakerGUI::menuCont() {
             //    autoContour(m_focus->contour, m_img, m_focus->rect);
             //}
 
-            //ImGui::SameLine();
-
-            //if (ImGui::Button("ok")) {
-            //    setMode(M_Rect);
-            //}
         }
 
         ImGui::End();
     }
 
-}
 
-void GTMakerGUI::dispCont() {
-    if (m_focus == NULL) return;
+    const Vec2 pix = invMat(m_ptr->m_vmat) * m_ptr->m_mouse.pos;
 
-    const Vec2 pix = invMat(m_pmat * m_vmat) * m_mouse.pos;
+    const int findPos = m_ptr->findNearPos(m_ptr->m_focus->contour, pix);
+    const int findLine = m_ptr->findNearLine(*g_crnt, pix);
 
-    const int findPos = findNearPos(m_focus->contour, pix);
-    const int findLine = findNearLine(*g_crnt, pix);
-
-    MemP<GT> &gts = m_database.gtsList[m_selectid];
+    MemP<GT> &gts = m_ptr->m_database.gtsList[m_ptr->m_selectid];
 
     {
         {
-            Render::line(getVtx2(m_focus->rect), RENDER_BASE, 3.0f, true);
+            Render::line(getVtx2(m_ptr->m_focus->rect), RENDER_BASE, 3.0f, true);
         }
 
         Mem1<Vec2> contour = *g_crnt;
         bool loop = true;
 
-        if (m_state == S_Init) {
+        if (m_ptr->m_state == S_Init) {
             contour.push(*g_select);
             loop = false;
         }
@@ -108,17 +99,17 @@ void GTMakerGUI::dispCont() {
     }
 
     if (findPos >= 0) {
-        Render::point(m_focus->contour[findPos], RENDER_NEAR, 7.0f);
+        Render::point(m_ptr->m_focus->contour[findPos], RENDER_NEAR, 7.0f);
     }
-    else if (m_focus->contour.size() > 0 && findLine >= 0) {
-        const Vec2 a = m_focus->contour(findLine + 0, true);
-        const Vec2 b = m_focus->contour(findLine + 1, true);
+    else if (m_ptr->m_focus->contour.size() > 0 && findLine >= 0) {
+        const Vec2 a = m_ptr->m_focus->contour(findLine + 0, true);
+        const Vec2 b = m_ptr->m_focus->contour(findLine + 1, true);
         const Vec2 v = unitVec(a - b);
 
         const Vec2 nrm = getVec(-v.y, v.x);
         const double norm = ::fabs(dotVec(nrm, a - pix));
         const double in = dotVec(v, a - pix) * dotVec(v, b - pix);
-        const double thresh = 8.0 / m_viewScale;
+        const double thresh = 8.0 / m_ptr->m_viewScale;
 
         if (norm < thresh && in <= 0) {
             const Vec2 p = pix + nrm * dotVec(nrm, a - pix);
@@ -128,23 +119,23 @@ void GTMakerGUI::dispCont() {
 
 }
 
-void GTMakerGUI::mouseButtonCont(int button, int action, int mods) {
-    if (m_focus == NULL) return;
+void GTMakerGUI::ContEditor::mouseButton() {
+    if (m_ptr->m_focus == NULL) return;
 
-    const Vec2 pix = invMat(m_pmat * m_vmat) * m_mouse.pos;
+    const Vec2 pix = invMat(m_ptr->m_vmat) * m_ptr->m_mouse.pos;
 
-    const int findPos = findNearPos(*g_crnt, pix);
-    const int findLine = findNearLine(*g_crnt, pix);
+    const int findPos = m_ptr->findNearPos(*g_crnt, pix);
+    const int findLine = m_ptr->findNearLine(*g_crnt, pix);
  
     static Mem1<Vec2> edit;
     static Vec2 select;
 
     select = pix;
 
-    switch (m_mouse.bDownL) {
+    switch (m_ptr->m_mouse.bDownL) {
     case 1:
     {
-        if (m_state == S_Base && m_focus->contour.size() == 0){
+        if (m_ptr->m_state == S_Base && m_ptr->m_focus->contour.size() == 0){
             edit.clear();
 
             g_crnt = &edit;
@@ -152,64 +143,64 @@ void GTMakerGUI::mouseButtonCont(int button, int action, int mods) {
             
             g_select = &select;
 
-            m_state = S_Init;
+            m_ptr->m_state = S_Init;
         }
-        else if (m_state == S_Init) {
+        else if (m_ptr->m_state == S_Init) {
             if (findPos == 0) {
-                m_focus->contour = edit;
-                g_crnt = &m_focus->contour;
+                m_ptr->m_focus->contour = edit;
+                g_crnt = &m_ptr->m_focus->contour;
 
                 g_select = NULL;
 
-                m_state = S_Base;
+                m_ptr->m_state = S_Base;
             }
             else {
                 g_crnt->push(pix);
                 g_select = &select;
 
-                m_state = S_Init;
+                m_ptr->m_state = S_Init;
             }
         }
         else if (findPos >= 0) {
-            edit = m_focus->contour;
+            edit = m_ptr->m_focus->contour;
             g_crnt = &edit;
 
             g_select = &edit[findPos];
-            m_state = S_Edit;
+            m_ptr->m_state = S_Edit;
         }
         else if (findLine >= 0) {
-            m_focus->contour.add(findLine + 1, pix);
+            m_ptr->m_focus->contour.add(findLine + 1, pix);
 
-            edit = m_focus->contour;
+            edit = m_ptr->m_focus->contour;
             g_crnt = &edit;
 
             g_select = &edit[findLine + 1];
-            m_state = S_Edit;
+            m_ptr->m_state = S_Edit;
         }
         break;
     }
     case 0:
     {
-        if (m_state == S_Edit) {
-            m_focus->contour = edit;
-            g_crnt = &m_focus->contour;
-            m_state = S_Base;
+        if (m_ptr->m_state == S_Edit) {
+            m_ptr->m_focus->contour = edit;
+            g_crnt = &m_ptr->m_focus->contour;
+            m_ptr->m_state = S_Base;
         }
         break;
     }
     }
 
-    switch (m_mouse.bDownR) {
+    switch (m_ptr->m_mouse.bDownR) {
     case 1:
     {  
         if (findPos >= 0) {
-            if (m_focus->contour.size() > 1) {
-                m_focus->contour.del(findPos);
+            if (m_ptr->m_focus->contour.size() > 1) {
+                m_ptr->m_focus->contour.del(findPos);
             }
             else {
-                m_focus->contour.clear();
+                m_ptr->m_focus->contour.clear();
             }
-            m_mouse.reset();
+            m_ptr->m_mouse.reset();
         }
 
         break;
@@ -221,7 +212,7 @@ void GTMakerGUI::mouseButtonCont(int button, int action, int mods) {
     }
 
     {
-        const Rect rect = getRect2(m_img.dsize);
+        const Rect rect = getRect2(m_ptr->m_img.dsize);
         const Vec2 a = getVec(rect.dbase[0], rect.dbase[1]);
         const Vec2 b = a + getVec(rect.dsize[0] - 1, rect.dsize[1] - 1);
         for (int i = 0; i < g_crnt->size(); i++) {
@@ -236,17 +227,17 @@ void GTMakerGUI::mouseButtonCont(int button, int action, int mods) {
     }
 }
 
-void GTMakerGUI::mousePosCont(double x, double y) {
-    if (m_focus == NULL || m_state == S_Base) return;
+void GTMakerGUI::ContEditor::mousePos() {
+    if (m_ptr->m_focus == NULL || m_ptr->m_state == S_Base) return;
 
-    const Vec2 pix = invMat(m_pmat * m_vmat) * m_mouse.pos;
+    const Vec2 pix = invMat(m_ptr->m_vmat) * m_ptr->m_mouse.pos;
    
-    const int findPos = findNearPos(m_focus->contour, pix);
+    const int findPos = m_ptr->findNearPos(m_ptr->m_focus->contour, pix);
     
     if (g_select != NULL) {
         *g_select = pix;
     }
-    if (m_state == S_Edit) {
-        m_focus->contour = *g_crnt;
+    if (m_ptr->m_state == S_Edit) {
+        m_ptr->m_focus->contour = *g_crnt;
     }
 }

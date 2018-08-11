@@ -11,33 +11,33 @@ using namespace sp;
 // member
 //--------------------------------------------------------------------------------
 
-void GTMakerGUI::initOrdr() {
+void GTMakerGUI::OrdrEditor::init() {
 
 }
 
-void GTMakerGUI::menuOrdr() {
+void GTMakerGUI::OrdrEditor::display() {
 
-    MemP<GT> &gts = m_database.gtsList[m_selectid];
+    MemP<GT> &gts = m_ptr->m_database.gtsList[m_ptr->m_selectid];
 
     for (int i = 0; i < gts.size(); i++) {
         GT &gt = gts[i];
 
         if (gt.contour.size() == 0) continue;
-        if (&gt == m_focus && m_state == S_Init) continue;
+        if (&gt == m_ptr->m_focus && m_ptr->m_state == S_Init) continue;
 
         if (ImGui::Begin(strFormat("GT %p", &gt).c_str(), NULL, ImGuiWindowFlags_Block)) {
             {
-                const Vec2 pos = m_pmat * m_vmat * getVec(gt.rect.dbase[0], gt.rect.dbase[1]) + getVec(0.0, -40.0);
+                const Vec2 pos = m_ptr->m_vmat * getVec(gt.rect.dbase[0], gt.rect.dbase[1]) + getVec(0.0, -40.0);
                 ImGui::SetWindowPos(ImVec2(static_cast<float>(pos.x), static_cast<float>(pos.y)), ImGuiCond_Always);
             }
 
-            if (&gt != m_focus && ImGui::IsMouseClicked(0) == true && ImGui::IsWindowHovered() == true) {
-                m_focus = &gt;
+            if (&gt != m_ptr->m_focus && ImGui::IsMouseClicked(0) == true && ImGui::IsWindowHovered() == true) {
+                m_ptr->m_focus = &gt;
             }
 
             ImGui::AlignTextToFramePadding();
 
-            if (&gt != m_focus) {
+            if (&gt != m_ptr->m_focus) {
                 ImGui::SetWindowSize(ImVec2(50.0f, 35.0f), ImGuiCond_Always);
 
                 ImGui::Text("> %02d", i);
@@ -56,7 +56,7 @@ void GTMakerGUI::menuOrdr() {
                 if (ImGui::Button("++")) {
                     if (i < gts.size() - 1) {
                         sp::swap(gts[i], gts[i + 1]);
-                        m_focus = &gts[i + 1];
+                        m_ptr->m_focus = &gts[i + 1];
                     }
                 }
                 
@@ -65,19 +65,13 @@ void GTMakerGUI::menuOrdr() {
                 if (ImGui::Button("--")) {
                     if (i > 0) {
                         sp::swap(gts[i], gts[i - 1]);
-                        m_focus = &gts[i - 1];
+                        m_ptr->m_focus = &gts[i - 1];
                     }
                 }
             }
             ImGui::End();
         }
     }
-
-}
-
-void GTMakerGUI::dispOrdr() {
-
-    MemP<GT> &gts = m_database.gtsList[m_selectid];
 
     for (int i = 0; i < gts.size(); i++) {
         GT &gt = gts[i];
@@ -94,16 +88,16 @@ void GTMakerGUI::dispOrdr() {
         Render::fill(meshes, getCol(gt.label), 3.0f);
     }
 
-    if (m_focus != NULL) {
-        Render::line(m_focus->contour, RENDER_HIGH, 3.0f, true);
-        Render::point(m_focus->contour, RENDER_HIGH, 7.0f);
+    if (m_ptr->m_focus != NULL) {
+        Render::line(m_ptr->m_focus->contour, RENDER_HIGH, 3.0f, true);
+        Render::point(m_ptr->m_focus->contour, RENDER_HIGH, 7.0f);
     }
 
 }
 
-void GTMakerGUI::mouseButtonOrdr(int button, int action, int mods) {
+void GTMakerGUI::OrdrEditor::mouseButton() {
 }
 
-void GTMakerGUI::mousePosOrdr(double x, double y) {
+void GTMakerGUI::OrdrEditor::mousePos() {
 }
 
