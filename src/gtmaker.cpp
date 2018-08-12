@@ -7,7 +7,7 @@ using namespace sp;
 //--------------------------------------------------------------------------------
 
 void GTMakerGUI::dispData() {
-    MemP<GT> &gts = m_database.gtsList[m_selectid];
+    MemP<GT> &gts = m_database.gtsList[m_select];
 
     if (ImGui::Begin("database", NULL, ImGuiWindowFlags_Block)) {
 
@@ -18,12 +18,12 @@ void GTMakerGUI::dispData() {
             ImGui::Text("\n");
 
             ImGui::AlignTextToFramePadding();
-            ImGui::BulletText(m_database.imNames[m_selectid].c_str());
+            ImGui::BulletText(m_database.imNames[m_select].c_str());
 
             ImGui::BeginChild("image", ImVec2(0, 26));
             ImGui::AlignTextToFramePadding();
-            if (ImGui::InputInt(strFormat("/%d", m_database.imNames.size()).c_str(), &m_selectid, 1, 100)) {
-                select(m_selectid);
+            if (ImGui::InputInt(strFormat("/%d", m_database.imNames.size()).c_str(), &m_select, 1, 100)) {
+                select(m_select);
             }
 
             ImGui::EndChild();
@@ -138,6 +138,14 @@ void GTMakerGUI::dispData() {
             }
 
             if (checkMode(M_Ordr) == true) {
+                if (ImGui::Selectable(m_mode != M_Ordr ? "-order" : "*order")) {
+                    setMode(M_Ordr);
+                }
+                ImGui::SameLine(120.0f);
+                ImGui::Text("key = e");
+            }
+
+            if (checkMode(M_Pose) == true) {
                 if (ImGui::Selectable(m_mode != M_Ordr ? "-order" : "*order")) {
                     setMode(M_Ordr);
                 }

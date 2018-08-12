@@ -79,7 +79,7 @@ void GTMakerGUI::ContEditor::display() {
     const int findPos = m_ptr->findNearPos(m_ptr->m_focus->contour, pix);
     const int findLine = m_ptr->findNearLine(*g_crnt, pix);
 
-    MemP<GT> &gts = m_ptr->m_database.gtsList[m_ptr->m_selectid];
+    MemP<GT> &gts = m_ptr->m_database.gtsList[m_ptr->m_select];
 
     {
         {

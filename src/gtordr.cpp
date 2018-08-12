@@ -17,7 +17,7 @@ void GTMakerGUI::OrdrEditor::init() {
 
 void GTMakerGUI::OrdrEditor::display() {
 
-    MemP<GT> &gts = m_ptr->m_database.gtsList[m_ptr->m_selectid];
+    MemP<GT> &gts = m_ptr->m_database.gtsList[m_ptr->m_select];
 
     for (int i = 0; i < gts.size(); i++) {
         GT &gt = gts[i];

@@ -20,13 +20,12 @@ void GTMakerGUI::RectEditor::init() {
 
 void GTMakerGUI::RectEditor::display() {
 
-    MemP<GT> &gts = m_ptr->m_database.gtsList[m_ptr->m_selectid];
+    MemP<GT> &gts = m_ptr->m_database.gtsList[m_ptr->m_select];
 
     Mem1<const char *> combolist;
     for (int i = 0; i < m_ptr->m_database.gtNames.size(); i++) {
         combolist.push(m_ptr->m_database.gtNames[i].c_str());
     }
-
 
     for (int i = 0; i < gts.size(); i++) {
         GT &gt = gts[i];
@@ -80,25 +79,27 @@ void GTMakerGUI::RectEditor::display() {
         }
     }
 
-    for (int i = 0; i < gts.size(); i++) {
-        GT &gt = gts[i];
+    { // render line
 
-        Render::line(getVtx2(gt.rect), RENDER_BASE, 3.0f, true);
- 
-        //if (gt.contour.size() == 0) continue;
-        //Render::line(gt.contour, RENDER_GRAY, 3.0f, true);
-    }
+        for (int i = 0; i < gts.size(); i++) {
+            GT &gt = gts[i];
 
-    if (m_ptr->m_focus != NULL) {
-        if (m_ptr->m_state == S_Edit) {
-            Render::line(getVtx2(m_ptr->m_focus->rect), RENDER_HIGH, 3.0f, true);
+            Render::line(getVtx2(gt.rect), RENDER_BASE, 3.0f, true);
+
+            //if (gt.contour.size() == 0) continue;
+            //Render::line(gt.contour, RENDER_GRAY, 3.0f, true);
         }
-        else {
-            Render::line(getVtx2(m_ptr->m_focus->rect), RENDER_HIGH, 3.0f, true);
-            Render::point(getVtx2(m_ptr->m_focus->rect), RENDER_HIGH, 7.0f);
+
+        if (m_ptr->m_focus != NULL) {
+            if (m_ptr->m_state == S_Edit) {
+                Render::line(getVtx2(m_ptr->m_focus->rect), RENDER_HIGH, 3.0f, true);
+            }
+            else {
+                Render::line(getVtx2(m_ptr->m_focus->rect), RENDER_HIGH, 3.0f, true);
+                Render::point(getVtx2(m_ptr->m_focus->rect), RENDER_HIGH, 7.0f);
+            }
         }
     }
-
 }
 
 void GTMakerGUI::RectEditor::mouseButton() {
@@ -120,7 +121,7 @@ void GTMakerGUI::RectEditor::mouseButton() {
 
         if (find < 0) {
             m_ptr->m_state = S_Init;
-            m_ptr->m_focus = m_ptr->m_database.gtsList[m_ptr->m_selectid].malloc();
+            m_ptr->m_focus = m_ptr->m_database.gtsList[m_ptr->m_select].malloc();
             m_ptr->m_focus->init(getRect2(pix));
         }
         else {
@@ -137,7 +138,7 @@ void GTMakerGUI::RectEditor::mouseButton() {
         if (m_ptr->m_focus == NULL) break;
 
         if (m_ptr->m_state == S_Init && minVal(m_ptr->m_focus->rect.dsize[0], m_ptr->m_focus->rect.dsize[1]) < 10) {
-            m_ptr->m_database.gtsList[m_ptr->m_selectid].free(m_ptr->m_focus);
+            m_ptr->m_database.gtsList[m_ptr->m_select].free(m_ptr->m_focus);
             m_ptr->m_focus = NULL;
         }
 

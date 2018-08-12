@@ -5,6 +5,7 @@
 
 using namespace sp;
 
+
 class GTMakerGUI : public BaseWindow {
 
 public:
@@ -14,16 +15,17 @@ public:
     Mem2<Col3> m_img;
 
     // selected id
-    int m_selectid;
+    int m_select;
 
     // focused gt
     GT *m_focus;
-    
+
     // editor mode
     enum Mode {
         M_Rect = 0, // Rectangle
         M_Ordr = 1, // Order
-        M_Cont = 2  // Contour
+        M_Cont = 2, // Contour
+        M_Pose = 3  // Pose
     };
     Mode m_mode;
 
@@ -59,10 +61,14 @@ public:
 
 private:
 
-    void select(const int id) {
-        m_selectid = maxVal(0, minVal(m_database.imNames.size() - 1, id));
+    //--------------------------------------------------------------------------------
+    // image
+    //--------------------------------------------------------------------------------
 
-        const string path = m_database.imDir + "/" + m_database.imNames[m_selectid];
+    void select(const int id) {
+        m_select = maxVal(0, minVal(m_database.imNames.size() - 1, id));
+
+        const string path = m_database.imDir + "/" + m_database.imNames[m_select];
         SP_ASSERT(cvLoadImg(m_img, path.c_str()));
 
         reset();
@@ -70,16 +76,58 @@ private:
         adjustImg();
     }
 
+    void adjustImg() {
+        if (m_img.size() == 0) return;
+
+        m_viewPos = getVec(100.0, 10.0);
+        m_viewScale = 0.92 * minVal(static_cast<double>(m_wcam.dsize[0] - 180) / m_img.dsize[0], static_cast<double>(m_wcam.dsize[1]) / m_img.dsize[1]);
+    }
+
+private:
+
+    //--------------------------------------------------------------------------------
+    // editor
+    //--------------------------------------------------------------------------------
+
+    class Editor {
+    public:
+        GTMakerGUI * m_ptr;
+    public:
+        Editor(GTMakerGUI *ptr) { m_ptr = ptr; }
+        virtual void init() = 0;
+        virtual void display() = 0;
+        virtual void mouseButton() = 0;
+        virtual void mousePos() = 0;
+    };
+    Editor *m_editor;
+
+#define EDITOR(name) \
+    class name : public Editor { \
+    public: \
+        name(GTMakerGUI *ptr) : Editor(ptr) {}; \
+        virtual void init(); \
+        virtual void display(); \
+        virtual void mouseButton(); \
+        virtual void mousePos(); \
+    };
+
+    EDITOR(RectEditor);
+    EDITOR(OrdrEditor);
+    EDITOR(ContEditor);
+    EDITOR(PoseEditor);
+
     void setMode(const Mode mode) {
         static RectEditor rectEditor(this);
         static OrdrEditor ordrEditor(this);
         static ContEditor contEditor(this);
+        static PoseEditor poseEditor(this);
 
         if (m_editor == NULL || (checkMode(mode) == true && mode != m_mode)) {
             switch (mode) {
             case M_Rect: m_editor = &rectEditor; break;
             case M_Cont: m_editor = &contEditor; break;
             case M_Ordr: m_editor = &ordrEditor; break;
+            case M_Pose: m_editor = &poseEditor; break;
             }
 
             m_mode = mode;
@@ -89,19 +137,24 @@ private:
     }
 
     bool checkMode(const Mode mode) {
-        if (m_database.isValid() == false) false;
+        if (m_database.valid() == false) false;
 
         if (mode == M_Cont) {
             if (m_focus == NULL) return false;
             if (m_mode == M_Rect && m_state != S_Base) return false;
         }
         if (mode == M_Ordr) {
-            MemP<GT> &gts = m_database.gtsList[m_selectid];
+            MemP<GT> &gts = m_database.gtsList[m_select];
             int cnt = 0;
             for (int i = 0; i < gts.size(); i++) {
                 if (gts[i].contour.size() > 0) cnt++;
             }
             if (cnt < 2) return false;
+        }
+
+        if (mode == M_Pose) {
+            if (m_focus == NULL) return false;
+            if (m_mode == M_Rect && m_state != S_Base) return false;
         }
         return true;
     }
@@ -114,8 +167,6 @@ public:
   
     virtual void display() {
         
-        m_wmat = glGetWindowMat(m_img.dsize[0], m_img.dsize[1], m_viewPos, m_viewScale);
-
         if (ImGui::BeginMainMenuBar()) {
 
             if (ImGui::BeginMenu("file")) {
@@ -131,50 +182,41 @@ public:
         }
 
         {
-            glLoadView2D(m_img.dsize, m_viewPos, m_viewScale);
+			m_wmat = glGetWindowMat(m_img.dsize, m_viewPos, m_viewScale);
+
+			glLoadView2D(m_img.dsize, m_viewPos, m_viewScale);
             glRenderImg(m_img);
         }
 
-        if (m_database.isValid() == true) {
+        if (m_database.valid() == true) {
             
             dispData();
 
             m_editor->display();
-
-            //const ImVec4 col(0.8f, 0.8f, 0.8f, 0.8f);
-            //ImGui::PushStyleColor(ImGuiCol_WindowBg, col);
-            //ImGui::PopStyleColor();
         }
     }
 
     void dispData();
 
+
     //--------------------------------------------------------------------------------
     // others
     //--------------------------------------------------------------------------------
 
-    void adjustImg() {
-        if (m_img.size() == 0) return;
-
-        m_viewPos = getVec(100.0, 10.0);
-        m_viewScale = 0.92 * minVal(static_cast<double>(m_wcam.dsize[0] - 180) / m_img.dsize[0], static_cast<double>(m_wcam.dsize[1]) / m_img.dsize[1]);
-    }
-
-
     virtual void windowSize(int width, int height) {
-        if (m_database.isValid() == false) return;
+        if (m_database.valid() == false) return;
 
         adjustImg();
     }
 
     virtual void keyFun(int key, int scancode, int action, int mods) {
-        if (m_database.isValid() == false) return;
+        if (m_database.valid() == false) return;
  
         if (m_keyAction[GLFW_KEY_A] > 0) {
-            select(m_selectid - 1);
+            select(m_select - 1);
         }
         if (m_keyAction[GLFW_KEY_S] > 0) {
-            select(m_selectid + 1);
+            select(m_select + 1);
         }
 
         if (m_keyAction[GLFW_KEY_Q] > 0) {
@@ -189,12 +231,12 @@ public:
     }
 
     virtual void mouseButton(int button, int action, int mods) {
-        if (m_database.isValid() == false) return;
+        if (m_database.valid() == false) return;
         m_editor->mouseButton();
     }
 
     virtual void mousePos(double x, double y) {
-        if (m_database.isValid() == false) return;
+        if (m_database.valid() == false) return;
         m_editor->mousePos();
     }
 
@@ -206,46 +248,6 @@ public:
     int findNearLine(const Mem1<Vec2> &pnst, const Vec2 &pix);
 
 
-    //--------------------------------------------------------------------------------
-    // editor
-    //--------------------------------------------------------------------------------
-
-    class Editor {
-    public:
-        GTMakerGUI *m_ptr;
-    public:
-        Editor(GTMakerGUI *ptr) { m_ptr = ptr; }
-        virtual void init() = 0;
-        virtual void display() = 0;
-        virtual void mouseButton() = 0;
-        virtual void mousePos() = 0;
-    };
-    Editor *m_editor;
-
-    class RectEditor : public Editor {
-    public:
-        RectEditor(GTMakerGUI *ptr) : Editor(ptr) {};
-        virtual void init();
-        virtual void display();
-        virtual void mouseButton();
-        virtual void mousePos();
-    };
-    class OrdrEditor : public Editor {
-    public:
-        OrdrEditor(GTMakerGUI *ptr) : Editor(ptr) {};
-        virtual void init();
-        virtual void display();
-        virtual void mouseButton();
-        virtual void mousePos();
-    };
-    class ContEditor : public Editor {
-    public:
-        ContEditor(GTMakerGUI *ptr) : Editor(ptr) {};
-        virtual void init();
-        virtual void display();
-        virtual void mouseButton();
-        virtual void mousePos();
-    };
  };
 
 #endif

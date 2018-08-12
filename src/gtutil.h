@@ -83,7 +83,7 @@ public:
         wkDir = getTimeStamp();
     }
 
-    bool isValid() {
+    bool valid() {
         return (imNames.size() > 0) ? true : false;
     }
 
@@ -110,7 +110,7 @@ public:
             printf("no image in the directory");
         }
 
-        return isValid();
+        return valid();
     }
 
     bool open_wkDir() {
