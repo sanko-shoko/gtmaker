@@ -201,9 +201,11 @@ public:
     void updateLabel(const int id, const int val) {
         if (val > 0) {
             gtNames.add(id, "");
+            gtModels.add(id, Mem1<Mesh3>());
         }
         else {
             gtNames.del(id);
+            gtModels.del(id);
         }
 
         for (int i = 0; i < gtsList.size(); i++) {

@@ -100,7 +100,7 @@ void GTMakerGUI::dispData() {
 
                     ImGui::SameLine();
 
-                    if (ImGui::Button("del")) {
+                    if (ImGui::ButtonPopup("del", "delete?")) {
                         m_database.updateLabel(i, -1);
                         i--;
                     }
@@ -142,13 +142,13 @@ void GTMakerGUI::dispData() {
                 ImGui::Text("key = e");
             }
 
-            if (checkMode(M_Pose) == true) {
-                if (ImGui::Selectable(m_mode != M_Ordr ? "-order" : "*order")) {
-                    setMode(M_Ordr);
-                }
-                ImGui::SameLine(120.0f);
-                ImGui::Text("key = e");
-            }
+            //if (checkMode(M_Pose) == true) {
+            //    if (ImGui::Selectable(m_mode != M_Ordr ? "-order" : "*order")) {
+            //        setMode(M_Ordr);
+            //    }
+            //    ImGui::SameLine(120.0f);
+            //    ImGui::Text("key = e");
+            //}
         }
 
         ImGui::End();
