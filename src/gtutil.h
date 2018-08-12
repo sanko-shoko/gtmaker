@@ -68,14 +68,14 @@ public:
     // image names
     Mem1<string> imNames;
 
-    // edit flags
-    Mem1<bool> flags;
-
     // gt names;
     Mem1<string> gtNames;
 
-    // gt rects list
-    Mem1<MemP<GT>> gtsList;
+    // gt models;
+    Mem1<Mem1<Mesh3> > gtModels;
+
+    // output list
+    Mem1<MemP<GT> > gtsList;
 
 public:
 
@@ -97,9 +97,6 @@ public:
         imNames = getFileList(path, "bmp, BMP, png, PNG, jpeg, JPEG, jpg, JPG");
         
         gtsList.resize(imNames.size());
-
-        flags.resize(imNames.size());
-        flags.zero();
 
         if (imNames.size() > 0) {
             for (int i = 0; i < imNames.size(); i++) {
@@ -202,6 +199,13 @@ public:
     }
 
     void updateLabel(const int id, const int val) {
+        if (val > 0) {
+            gtNames.add(id, "");
+        }
+        else {
+            gtNames.del(id);
+        }
+
         for (int i = 0; i < gtsList.size(); i++) {
             MemP<GT> &gts = gtsList[i];
 

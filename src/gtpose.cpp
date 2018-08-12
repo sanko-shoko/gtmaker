@@ -40,8 +40,8 @@ void GTMakerGUI::PoseEditor::display() {
 
             ImGui::SameLine(0, 30.0f);
 
-            if (ImGui::ButtonPopup("loa", "reset?")) {
-                g_crnt->clear();
+            if (ImGui::Button("load ply")) {
+
             }
 
             ImGui::SameLine();

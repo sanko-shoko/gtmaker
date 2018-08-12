@@ -71,7 +71,6 @@ void GTMakerGUI::dispData() {
                 ImGui::SameLine(0, 31);
 
                 if (ImGui::Button("add")) {
-                    m_database.gtNames.add(0, "");
                     m_database.updateLabel(0, +1);
                 }
                 ImGui::EndChild();
@@ -96,14 +95,12 @@ void GTMakerGUI::dispData() {
                     ImGui::SameLine();
 
                     if (ImGui::Button("add")) {
-                        m_database.gtNames.add(i + 1, "");
                         m_database.updateLabel(i + 1, +1);
                     }
 
                     ImGui::SameLine();
 
                     if (ImGui::Button("del")) {
-                        m_database.gtNames.del(i);
                         m_database.updateLabel(i, -1);
                         i--;
                     }
