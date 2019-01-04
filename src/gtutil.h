@@ -350,7 +350,7 @@ public:
 
         glBegin(GL_TRIANGLE_FAN);
 
-        glColor(extCol(col, 220));
+        glColor(getCol(col, 220));
         glVertex(vtxs[0]);
         glVertex(vtxs[1]);
         glVertex(vtxs[2]);
@@ -368,7 +368,7 @@ public:
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glBegin(GL_TRIANGLES);
 
-        glColor(extCol(col, 220));
+        glColor(getCol(col, 220));
         for (int i = 0; i < meshes.size(); i++) {
             glMesh(meshes[i]);
         }

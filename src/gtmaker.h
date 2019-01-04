@@ -43,7 +43,6 @@ public:
 public:
 
     GTMakerGUI() {
-        ImGui::GetIO().IniFilename = NULL;
         m_mode = M_Rect;
         m_editor = NULL;
 
@@ -57,6 +56,10 @@ public:
         m_focus = NULL;
         m_state = S_Base;
         setMode(M_Rect);
+    }
+
+    virtual void init() {
+        ImGui::GetIO().IniFilename = NULL;
     }
 
 private:
@@ -185,7 +188,7 @@ public:
 			m_wmat = glGetWindowMat(m_img.dsize, m_viewPos, m_viewScale);
 
 			glLoadView2D(m_img.dsize, m_viewPos, m_viewScale);
-            glRenderImg(m_img);
+            glTexImg(m_img);
         }
 
         if (m_database.valid() == true) {
