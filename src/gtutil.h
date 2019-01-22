@@ -12,7 +12,6 @@
 using namespace sp;
 
 namespace ImGui {
-#define ImGuiWindowFlags_Block (ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoFocusOnAppearing)
 
     inline bool ButtonPopup(const char *name, const char *popup) {
         if (ImGui::Button(name)) {
