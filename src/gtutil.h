@@ -11,6 +11,31 @@
 
 using namespace sp;
 
+namespace ImGui {
+#define ImGuiWindowFlags_Block (ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoFocusOnAppearing)
+
+    inline bool ButtonPopup(const char *name, const char *popup) {
+        if (ImGui::Button(name)) {
+            ImGui::OpenPopup(popup);
+        }
+
+        bool ret = false;
+        if (ImGui::BeginPopupModal(popup, NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
+            if (ImGui::Button("ok", ImVec2(80, 0))) {
+                ImGui::CloseCurrentPopup();
+                ret = true;
+            }
+            ImGui::SameLine();
+            if (ImGui::Button("cancel", ImVec2(80, 0))) {
+                ImGui::CloseCurrentPopup();
+                ret = false;
+            }
+            ImGui::EndPopup();
+        }
+        return ret;
+    }
+}
+
 //--------------------------------------------------------------------------------
 // data class
 //--------------------------------------------------------------------------------
