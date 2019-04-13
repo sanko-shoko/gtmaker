@@ -41,7 +41,7 @@ void GTMakerGUI::ContEditor::display() {
 
     if (ImGui::Begin("editor", NULL, ImGuiWindowFlags_Block)) {
         {
-            const Vec2 pos = m_ptr->m_wmat * getVec(gt.rect.dbase[0], gt.rect.dbase[1]) + getVec(0.0, -40.0);
+            const Vec2 pos = m_ptr->m_wmat * getVec2(gt.rect.dbase[0], gt.rect.dbase[1]) + getVec2(0.0, -40.0);
             ImGui::SetWindowPos(ImVec2(static_cast<float>(pos.x), static_cast<float>(pos.y)), ImGuiCond_Always);
         }
 
@@ -106,7 +106,7 @@ void GTMakerGUI::ContEditor::display() {
         const Vec2 b = m_ptr->m_focus->contour(findLine + 1, true);
         const Vec2 v = unitVec(a - b);
 
-        const Vec2 nrm = getVec(-v.y, v.x);
+        const Vec2 nrm = getVec2(-v.y, v.x);
         const double norm = ::fabs(dotVec(nrm, a - pix));
         const double in = dotVec(v, a - pix) * dotVec(v, b - pix);
         const double thresh = 8.0 / m_ptr->m_viewScale;
@@ -213,8 +213,8 @@ void GTMakerGUI::ContEditor::mouseButton() {
 
     {
         const Rect rect = getRect2(m_ptr->m_img.dsize);
-        const Vec2 a = getVec(rect.dbase[0], rect.dbase[1]);
-        const Vec2 b = a + getVec(rect.dsize[0] - 1, rect.dsize[1] - 1);
+        const Vec2 a = getVec2(rect.dbase[0], rect.dbase[1]);
+        const Vec2 b = a + getVec2(rect.dsize[0] - 1, rect.dsize[1] - 1);
         for (int i = 0; i < g_crnt->size(); i++) {
             (*g_crnt)[i].x = sp::round((*g_crnt)[i].x);
             (*g_crnt)[i].y = sp::round((*g_crnt)[i].y);

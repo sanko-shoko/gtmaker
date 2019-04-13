@@ -82,7 +82,7 @@ private:
     void adjustImg() {
         if (m_img.size() == 0) return;
 
-        m_viewPos = getVec(100.0, 10.0);
+        m_viewPos = getVec2(100.0, 10.0);
         m_viewScale = 0.92 * minVal(static_cast<double>(m_wcam.dsize[0] - 180) / m_img.dsize[0], static_cast<double>(m_wcam.dsize[1]) / m_img.dsize[1]);
     }
 
