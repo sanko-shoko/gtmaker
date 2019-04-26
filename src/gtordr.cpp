@@ -85,7 +85,7 @@ void GTMakerGUI::OrdrEditor::display() {
         if (gt.contour.size() == 0) continue;
 
         const Mem1<Mesh2> meshes = divPolygon(gt.contour);
-        Render::fill(meshes, getCol(gt.label), 3.0f);
+        Render::fill(meshes, getCol3(gt.label), 3.0f);
     }
 
     if (m_ptr->m_focus != NULL) {

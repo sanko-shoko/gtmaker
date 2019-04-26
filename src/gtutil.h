@@ -113,7 +113,7 @@ public:
 
     bool open_imDir() {
 
-        const char *path = tinyfd_selectFolderDialog("open image dir", getCrntDir().c_str());
+        const char *path = tinyfd_selectFolderDialog("open image dir", getCrntDir());
         //const char *path = SP_DATA_DIR "/image";
         if (path == NULL) return false;
 
@@ -339,10 +339,10 @@ SP_CPUFUNC Mem<Vec2> getVtx2(const Rect &rect) {
 
 class Render{
 
-#define RENDER_BASE getCol( 80, 180, 160)
-#define RENDER_HIGH getCol(220, 240, 220)
-#define RENDER_GRAY getCol(180, 180, 180)
-#define RENDER_NEAR getCol(160, 160, 250)
+#define RENDER_BASE getCol3( 80, 180, 160)
+#define RENDER_HIGH getCol3(220, 240, 220)
+#define RENDER_GRAY getCol3(180, 180, 180)
+#define RENDER_NEAR getCol3(160, 160, 250)
 
 public:
  
@@ -384,7 +384,7 @@ public:
 
         glBegin(GL_TRIANGLE_FAN);
 
-        glColor(getCol(col, 220));
+        glColor(getCol4(col, 220));
         glVertex(vtxs[0]);
         glVertex(vtxs[1]);
         glVertex(vtxs[2]);
@@ -402,7 +402,7 @@ public:
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glBegin(GL_TRIANGLES);
 
-        glColor(getCol(col, 220));
+        glColor(getCol4(col, 220));
         for (int i = 0; i < meshes.size(); i++) {
             glMesh(meshes[i]);
         }
