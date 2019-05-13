@@ -167,7 +167,7 @@ int GTMakerGUI::findNearPos(const Mem1<Vec2> &pnts, const Vec2 &pix) {
     double minv = SP_INFINITY;
     for (int i = 0; i < pnts.size(); i++) {
         const double norm = normVec(pnts[i] - pix);
-        if (norm < minVal(minv, thresh)) {
+        if (norm < minval(minv, thresh)) {
             minv = norm;
             pos = i;
         }
@@ -193,7 +193,7 @@ int GTMakerGUI::findNearLine(const Mem1<Vec2> &pnts, const Vec2 &pix) {
         const double norm = ::fabs(dotVec(nrm, a - pix));
         const double in = dotVec(v, a - pix) * dotVec(v, b - pix);
 
-        if (norm < minVal(minv, thresh) && in <= 0) {
+        if (norm < minval(minv, thresh) && in <= 0) {
             minv = norm;
             pos = i;
         }

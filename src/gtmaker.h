@@ -69,7 +69,7 @@ private:
     //--------------------------------------------------------------------------------
 
     void select(const int id) {
-        m_select = maxVal(0, minVal(m_database.imNames.size() - 1, id));
+        m_select = maxval(0, minval(m_database.imNames.size() - 1, id));
 
         const string path = m_database.imDir + "/" + m_database.imNames[m_select];
         SP_ASSERT(cvLoadImg(m_img, path.c_str()));
@@ -83,7 +83,7 @@ private:
         if (m_img.size() == 0) return;
 
         m_viewPos = getVec2(100.0, 10.0);
-        m_viewScale = 0.92 * minVal(static_cast<double>(m_wcam.dsize[0] - 180) / m_img.dsize[0], static_cast<double>(m_wcam.dsize[1]) / m_img.dsize[1]);
+        m_viewScale = 0.92 * minval(static_cast<double>(m_wcam.dsize[0] - 180) / m_img.dsize[0], static_cast<double>(m_wcam.dsize[1]) / m_img.dsize[1]);
     }
 
 private:
@@ -215,20 +215,20 @@ public:
     virtual void keyFun(int key, int scancode, int action, int mods) {
         if (m_database.valid() == false) return;
  
-        if (m_keyAction[GLFW_KEY_A] > 0) {
+        if (m_key[GLFW_KEY_A] > 0) {
             select(m_select - 1);
         }
-        if (m_keyAction[GLFW_KEY_S] > 0) {
+        if (m_key[GLFW_KEY_S] > 0) {
             select(m_select + 1);
         }
 
-        if (m_keyAction[GLFW_KEY_Q] > 0) {
+        if (m_key[GLFW_KEY_Q] > 0) {
             setMode(M_Rect);
         }
-        if (m_keyAction[GLFW_KEY_W] > 0) {
+        if (m_key[GLFW_KEY_W] > 0) {
             setMode(M_Cont);
         }
-        if (m_keyAction[GLFW_KEY_E] > 0) {
+        if (m_key[GLFW_KEY_E] > 0) {
             setMode(M_Ordr);
         }
     }

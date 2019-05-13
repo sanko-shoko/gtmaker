@@ -15,7 +15,7 @@ Vec2 *g_select;
 //--------------------------------------------------------------------------------
 
 void autoContour(Mem1<Vec2> &contour, const Mem2<Col3> &img, const Rect &rect) {
-    //const int unit = minVal(rect.dsize[0], rect.dsize[1]) / 5;
+    //const int unit = minval(rect.dsize[0], rect.dsize[1]) / 5;
 
     //Mem1<Vec2> tmp;
     //snake(tmp, img, getVtx2(rect), unit);
@@ -132,7 +132,7 @@ void GTMakerGUI::ContEditor::mouseButton() {
 
     select = pix;
 
-    switch (m_ptr->m_mouse.bDownL) {
+    switch (m_ptr->m_mouse.buttonL) {
     case 1:
     {
         if (m_ptr->m_state == S_Base && m_ptr->m_focus->contour.size() == 0){
@@ -190,7 +190,7 @@ void GTMakerGUI::ContEditor::mouseButton() {
     }
     }
 
-    switch (m_ptr->m_mouse.bDownR) {
+    switch (m_ptr->m_mouse.buttonR) {
     case 1:
     {  
         if (findPos >= 0) {
@@ -219,10 +219,10 @@ void GTMakerGUI::ContEditor::mouseButton() {
             (*g_crnt)[i].x = sp::round((*g_crnt)[i].x);
             (*g_crnt)[i].y = sp::round((*g_crnt)[i].y);
 
-            (*g_crnt)[i].x = maxVal((*g_crnt)[i].x, a.x);
-            (*g_crnt)[i].y = maxVal((*g_crnt)[i].y, a.y);
-            (*g_crnt)[i].x = minVal((*g_crnt)[i].x, b.x);
-            (*g_crnt)[i].y = minVal((*g_crnt)[i].y, b.y);
+            (*g_crnt)[i].x = maxval((*g_crnt)[i].x, a.x);
+            (*g_crnt)[i].y = maxval((*g_crnt)[i].y, a.y);
+            (*g_crnt)[i].x = minval((*g_crnt)[i].x, b.x);
+            (*g_crnt)[i].y = minval((*g_crnt)[i].y, b.y);
         }
     }
 }

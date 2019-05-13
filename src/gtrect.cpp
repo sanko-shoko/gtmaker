@@ -105,7 +105,7 @@ void GTMakerGUI::RectEditor::display() {
 void GTMakerGUI::RectEditor::mouseButton() {
     const Vec2 pix = invMat(m_ptr->m_wmat) * m_ptr->m_mouse.pos;
 
-    switch (m_ptr->m_mouse.bDownL) {
+    switch (m_ptr->m_mouse.buttonL) {
     case 1:
     {
         int find = -1;
@@ -137,7 +137,7 @@ void GTMakerGUI::RectEditor::mouseButton() {
     {
         if (m_ptr->m_focus == NULL) break;
 
-        if (m_ptr->m_state == S_Init && minVal(m_ptr->m_focus->rect.dsize[0], m_ptr->m_focus->rect.dsize[1]) < 10) {
+        if (m_ptr->m_state == S_Init && minval(m_ptr->m_focus->rect.dsize[0], m_ptr->m_focus->rect.dsize[1]) < 10) {
             m_ptr->m_database.gtsList[m_ptr->m_select].free(m_ptr->m_focus);
             m_ptr->m_focus = NULL;
         }
