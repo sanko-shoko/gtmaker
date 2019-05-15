@@ -366,10 +366,8 @@ public:
 
         for (int s = 0; s < 2; s++) {
             glLineWidth(s == 0 ? size : size - 2.0f);
-            glBegin(GL_LINES);
             glColor(s == 0 ? col / 3.0 : col);
             glLine(vtxs, loop);
-            glEnd();
         }
     };
 
@@ -400,13 +398,11 @@ public:
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glBegin(GL_TRIANGLES);
 
         glColor(getCol4(col, 220));
         for (int i = 0; i < meshes.size(); i++) {
             glMesh(meshes[i]);
         }
-        glEnd();
 
         glDisable(GL_BLEND);
     }

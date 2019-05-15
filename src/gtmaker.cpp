@@ -22,7 +22,10 @@ void GTMakerGUI::dispData() {
 
             ImGui::BeginChild("image", ImVec2(0, 26));
             ImGui::AlignTextToFramePadding();
-            if (ImGui::InputInt(strFormat("/%d", m_database.imNames.size()).c_str(), &m_select, 1, 100)) {
+
+            char str[256];
+            sprintf(str, "/%d", m_database.imNames.size());
+            if (ImGui::InputInt(str, &m_select, 1, 100)) {
                 select(m_select);
             }
 
@@ -79,7 +82,10 @@ void GTMakerGUI::dispData() {
             ImGui::BeginChild("names", ImVec2(180, 140));
 
             for (int i = 0; i < m_database.gtNames.size(); i++) {
-                ImGui::BeginChild(strFormat("name%d", i).c_str(), ImVec2(0, 24));
+                char str[256];
+                sprintf(str, "name%d", i);
+
+                ImGui::BeginChild(str, ImVec2(0, 24));
 
                 {
                     char tmp[SP_STRMAX];

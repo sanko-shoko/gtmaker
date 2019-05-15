@@ -32,7 +32,10 @@ void GTMakerGUI::RectEditor::display() {
 
         if (&gt == m_ptr->m_focus &&  m_ptr->m_state == S_Init) continue;
 
-        if (ImGui::Begin(strFormat("GT %p", &gt).c_str(), NULL, ImGuiWindowFlags_Block)) {
+        char str[256];
+        sprintf(str, "GT %p", &gt);
+
+        if (ImGui::Begin(str, NULL, ImGuiWindowFlags_Block)) {
             {
                 const Vec2 pos = m_ptr->m_wmat * getVec2(gt.rect.dbase[0], gt.rect.dbase[1]) + getVec2(0.0, -40.0);
                 ImGui::SetWindowPos(ImVec2(static_cast<float>(pos.x), static_cast<float>(pos.y)), ImGuiCond_Always);
