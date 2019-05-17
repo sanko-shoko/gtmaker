@@ -35,6 +35,109 @@ namespace ImGui {
     }
 }
 
+SP_CPUFUNC string strTrim(const char *str, const char *tok = " ,\t\n\r") {
+    string dst;
+
+    const string src = str;
+
+    const string::size_type start = src.find_first_not_of(tok);
+
+    if (start != string::npos) {
+        const string::size_type end = src.find_last_not_of(tok);
+        dst = src.substr(start, end - start + 1);
+    }
+    return dst;
+}
+SP_CPUFUNC string trimDir(const char *dir) {
+    char buf[SP_STRMAX];
+    ::strcpy(buf, dir);
+
+    const int n = (int)::strlen(dir);
+    if (buf[n - 1] == '\\' || buf[n - 1] == '/') {
+        buf[n - 1] = '\0';
+    }
+    return string(buf);
+}
+
+
+SP_CPUFUNC Mem1<string> strSplit(const char *str, const char *tok = " ,\t\n\r") {
+    Mem1<string> dst;
+    Mem1<char> buf(static_cast<int>(::strlen(str) + 1), str);
+
+    const char *ret = ::strtok(buf.ptr, tok);
+    while (ret) {
+        dst.push(ret);
+        ret = ::strtok(NULL, tok);
+    }
+
+    return dst;
+}
+SP_CPUFUNC Mem1<string> getFileList(const char *dir, const char *ext = NULL) {
+    Mem1<string> list;
+
+    Mem1<string> all;
+#if WIN32
+    WIN32_FIND_DATA fd;
+
+    const HANDLE handle = FindFirstFile((string(dir) + "\\*.*").c_str(), &fd);
+    SP_ASSERT(handle != INVALID_HANDLE_VALUE);
+
+    do {
+        if (fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
+            // directory
+        }
+        else {
+            // file
+            all.push(fd.cFileName);
+        }
+    } while (FindNextFile(handle, &fd));
+
+    FindClose(handle);
+
+#else
+    string search_path;
+
+    struct stat stat_buf;
+
+    struct dirent **namelist = NULL;
+    const int dirElements = scandir(dir, &namelist, NULL, NULL);
+
+    for (int i = 0; i < dirElements; i += 1) {
+        const char *name = namelist[i]->d_name;
+        // skip . and ..
+        if ((strcmp(name, ".\0") != 0) && (strcmp(name, "..\0") != 0)) {
+
+            string path = dir + string(name);
+
+            if (stat(path.c_str(), &stat_buf) == 0) {
+
+                if ((stat_buf.st_mode & S_IFMT) == S_IFDIR) {
+                    // directory
+                }
+                else {
+                    // file
+                    all.push(name);
+                }
+            }
+            else {
+                // error
+            }
+        }
+    }
+    if (namelist != NULL) {
+        free(namelist);
+    }
+#endif
+    for (int i = 0; i < all.size(); i++) {
+        if (extcmp(all[i].c_str(), ext) == true) {
+            list.push(all[i]);
+        }
+    }
+
+    return list;
+}
+
+
 //--------------------------------------------------------------------------------
 // data class
 //--------------------------------------------------------------------------------
@@ -102,6 +205,13 @@ public:
     Mem1<MemP<GT> > gtsList;
 
 public:
+
+    SP_CPUFUNC string getTimeStamp(const char *format = "%Y%m%d_%H%M%S") {
+        char str[SP_STRMAX];
+        time_t t = time(NULL);
+        strftime(str, sizeof(str), format, localtime(&t));
+        return string(str);
+    }
 
     DataBase() {
         wkDir = getTimeStamp();
