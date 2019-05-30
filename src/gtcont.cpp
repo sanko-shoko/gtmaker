@@ -14,7 +14,7 @@ Vec2 *g_select;
 // function
 //--------------------------------------------------------------------------------
 
-void autoContour(Mem1<Vec2> &contour, const Mem2<Col3> &img, const Rect &rect) {
+void autoContour(Mem1<Vec2> &contour, const Mem2<Col3> &img, const Rect2 &rect) {
     //const int unit = minval(rect.dsize[0], rect.dsize[1]) / 5;
 
     //Mem1<Vec2> tmp;
@@ -212,7 +212,7 @@ void GTMakerGUI::ContEditor::mouseButton() {
     }
 
     {
-        const Rect rect = getRect2(m_ptr->m_img.dsize);
+        const Rect2 rect = getRect2(m_ptr->m_img.dsize);
         const Vec2 a = getVec2(rect.dbase[0], rect.dbase[1]);
         const Vec2 b = a + getVec2(rect.dsize[0] - 1, rect.dsize[1] - 1);
         for (int i = 0; i < g_crnt->size(); i++) {

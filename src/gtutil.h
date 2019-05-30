@@ -150,7 +150,7 @@ public:
     int label;
 
     // rect
-    Rect rect;
+    Rect2 rect;
     
     // contour
     Mem1<Vec2> contour;
@@ -175,7 +175,7 @@ public:
         return *this;
     }
 
-    void init(const Rect rect) {
+    void init(const Rect2 rect) {
         this->label = -1;
         this->rect = rect;
         this->contour.clear();
@@ -293,7 +293,6 @@ public:
 
                     int buf;
                     GT &gt = *gts.malloc();
-                    gt.rect.dim = 2;
                     sscanf(str, "%d,%d,%d,%d,%d,%d\n", &buf, &gt.label, &gt.rect.dbase[0], &gt.rect.dbase[1], &gt.rect.dsize[0], &gt.rect.dsize[1]);
                 }
             }
@@ -431,14 +430,12 @@ public:
     }
 
 };
-SP_CPUFUNC Mem<Vec2> getVtx2(const Rect &rect) {
+SP_CPUFUNC Mem<Vec2> getVtx2(const Rect2 &rect) {
     Mem1<Vec2> vtxs;
-    if (rect.dim >= 2) {
-        vtxs.push(getVec2(rect.dbase[0], rect.dbase[1]));
-        vtxs.push(getVec2(rect.dbase[0], rect.dbase[1] + rect.dsize[1]));
-        vtxs.push(getVec2(rect.dbase[0] + rect.dsize[0], rect.dbase[1] + rect.dsize[1]));
-        vtxs.push(getVec2(rect.dbase[0] + rect.dsize[0], rect.dbase[1]));
-    }
+    vtxs.push(getVec2(rect.dbase[0], rect.dbase[1]));
+    vtxs.push(getVec2(rect.dbase[0], rect.dbase[1] + rect.dsize[1]));
+    vtxs.push(getVec2(rect.dbase[0] + rect.dsize[0], rect.dbase[1] + rect.dsize[1]));
+    vtxs.push(getVec2(rect.dbase[0] + rect.dsize[0], rect.dbase[1]));
     return vtxs;
 }
 
@@ -481,7 +478,7 @@ public:
         }
     };
 
-    static void fill(const Rect &rect, const Col3 &col, const float size) {
+    static void fill(const Rect2 &rect, const Col3 &col, const float size) {
         const Mem1<Vec2> vtxs = getVtx2(rect);
 
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
