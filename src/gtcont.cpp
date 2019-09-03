@@ -102,8 +102,8 @@ void GTMakerGUI::ContEditor::display() {
         Render::point(m_ptr->m_focus->contour[findPos], RENDER_NEAR, 7.0f);
     }
     else if (m_ptr->m_focus->contour.size() > 0 && findLine >= 0) {
-        const Vec2 a = m_ptr->m_focus->contour(findLine + 0, true);
-        const Vec2 b = m_ptr->m_focus->contour(findLine + 1, true);
+        const Vec2 a = m_ptr->m_focus->contour.lacs(findLine + 0);
+        const Vec2 b = m_ptr->m_focus->contour.lacs(findLine + 1);
         const Vec2 v = unitVec(a - b);
 
         const Vec2 nrm = getVec2(-v.y, v.x);

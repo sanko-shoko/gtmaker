@@ -6,7 +6,7 @@
 using namespace sp;
 
 
-class GTMakerGUI : public BaseWindow {
+class GTMakerGUI : public BaseWindowIMGUI {
 
 public:
     DataBase m_database;
