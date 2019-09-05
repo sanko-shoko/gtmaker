@@ -458,7 +458,7 @@ public:
             glPointSize(s == 0 ? size : size - 2.0f);
 
             glBegin(GL_POINTS);
-            glColor(s == 0 ? col * 0.33 : col);
+            glColor(s == 0 ? cast<Col3f>(col) * 0.33 : cast<Col3f>(col));
             glVertex(a);
             glEnd();
         }
@@ -473,7 +473,7 @@ public:
 
         for (int s = 0; s < 2; s++) {
             glLineWidth(s == 0 ? size : size - 2.0f);
-            glColor(s == 0 ? col * 0.33 : col);
+            glColor(s == 0 ? cast<Col3f>(col) * 0.33 : cast<Col3f>(col));
             glLine(vtxs, loop);
         }
     };
