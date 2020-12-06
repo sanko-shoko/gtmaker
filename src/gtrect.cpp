@@ -140,7 +140,7 @@ void GTMakerGUI::RectEditor::mouseButton() {
     {
         if (m_ptr->m_focus == NULL) break;
 
-        if (m_ptr->m_state == S_Init && minval(m_ptr->m_focus->rect.dsize[0], m_ptr->m_focus->rect.dsize[1]) < 10) {
+        if (m_ptr->m_state == S_Init && min(m_ptr->m_focus->rect.dsize[0], m_ptr->m_focus->rect.dsize[1]) < 10) {
             m_ptr->m_database.gtsList[m_ptr->m_select].free(m_ptr->m_focus);
             m_ptr->m_focus = NULL;
         }

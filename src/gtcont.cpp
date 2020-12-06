@@ -15,7 +15,7 @@ Vec2 *g_select;
 //--------------------------------------------------------------------------------
 
 void autoContour(Mem1<Vec2> &contour, const Mem2<Col3> &img, const Rect2 &rect) {
-    //const int unit = minval(rect.dsize[0], rect.dsize[1]) / 5;
+    //const int unit = min(rect.dsize[0], rect.dsize[1]) / 5;
 
     //Mem1<Vec2> tmp;
     //snake(tmp, img, getVtx2(rect), unit);
@@ -219,10 +219,10 @@ void GTMakerGUI::ContEditor::mouseButton() {
             (*g_crnt)[i].x = sp::round((*g_crnt)[i].x);
             (*g_crnt)[i].y = sp::round((*g_crnt)[i].y);
 
-            (*g_crnt)[i].x = maxval((*g_crnt)[i].x, a.x);
-            (*g_crnt)[i].y = maxval((*g_crnt)[i].y, a.y);
-            (*g_crnt)[i].x = minval((*g_crnt)[i].x, b.x);
-            (*g_crnt)[i].y = minval((*g_crnt)[i].y, b.y);
+            (*g_crnt)[i].x = max((*g_crnt)[i].x, a.x);
+            (*g_crnt)[i].y = max((*g_crnt)[i].y, a.y);
+            (*g_crnt)[i].x = min((*g_crnt)[i].x, b.x);
+            (*g_crnt)[i].y = min((*g_crnt)[i].y, b.y);
         }
     }
 }
